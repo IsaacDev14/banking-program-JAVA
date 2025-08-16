@@ -1,66 +1,90 @@
 import java.util.Scanner;
 
 public class BankingProgram {
-    private static double balance = 0;
+    static Scanner scanner = new Scanner(System.in);
+
+    // ANSI color codes
+    public static final String RESET = "\u001B[0m";
+    public static final String RED = "\u001B[31m";
+    public static final String GREEN = "\u001B[32m";
+    public static final String YELLOW = "\u001B[33m";
+    public static final String BLUE = "\u001B[34m";
+    public static final String PURPLE = "\u001B[35m";
+    public static final String CYAN = "\u001B[36m";
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        boolean exit = false;
+        double balance = 0;
+        boolean isRunning = true;
+        int choice;
 
-        while (!exit) {
-            System.out.println("\n--- Banking Program ---");
-            System.out.println("1. Check Balance");
+        System.out.println(CYAN + "********************" + RESET);
+        System.out.println(YELLOW + "     BANKING PROGRAM" + RESET);
+
+        while (isRunning) {
+            System.out.println(CYAN + "********************" + RESET);
+            System.out.println("1. Show Balance");
             System.out.println("2. Deposit");
             System.out.println("3. Withdraw");
             System.out.println("4. Exit");
-            System.out.print("Choose an option: ");
+            System.out.println(CYAN + "********************" + RESET);
 
-            int choice = scanner.nextInt();
+            System.out.print(GREEN + "Enter your choice: " + RESET);
+            choice = scanner.nextInt();
 
             switch (choice) {
-                case 1:
-                    checkBalance();
-                    break;
-                case 2:
-                    deposit(scanner);
-                    break;
-                case 3:
-                    withdraw(scanner);
-                    break;
-                case 4:
-                    System.out.println("Thank you for using our banking program!");
-                    exit = true;
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
+                case 1 -> showBalance(balance);
+                case 2 -> balance += deposit();
+                case 3 -> balance -= withdraw(balance);
+                case 4 -> isRunning = false;
+                default -> System.out.println(RED + "Invalid Choice!" + RESET);
             }
         }
+
+        System.out.println(PURPLE + "-------------------" + RESET);
+        System.out.println(PURPLE + "Exiting............" + RESET);
+        System.out.println(PURPLE + "Thank you! Goodbye!" + RESET);
+        System.out.println(PURPLE + "-------------------" + RESET);
+
         scanner.close();
     }
 
-    private static void checkBalance() {
-        System.out.println("Your balance is: $" + balance);
+    static void showBalance(double balance) {
+        System.out.println(BLUE + "--------------------" + RESET);
+        System.out.printf(BLUE + "$%.2f\n" + RESET, balance);
+        System.out.println(BLUE + "--------------------" + RESET);
     }
 
-    private static void deposit(Scanner scanner) {
-        System.out.print("Enter amount to deposit: ");
-        double amount = scanner.nextDouble();
-        if (amount > 0) {
-            balance += amount;
-            System.out.println("Deposited $" + amount + ". New balance: $" + balance);
+    static double deposit() {
+        double amount;
+
+        System.out.print(GREEN + "Enter Deposit Amount: " + RESET);
+        amount = scanner.nextDouble();
+
+        if (amount < 0) {
+            System.out.println(RED + "-------------------" + RESET);
+            System.out.println(RED + "Amount can't be less than 0" + RESET);
+            return 0;
         } else {
-            System.out.println("Invalid amount.");
+            return amount;
         }
     }
 
-    private static void withdraw(Scanner scanner) {
-        System.out.print("Enter amount to withdraw: ");
-        double amount = scanner.nextDouble();
-        if (amount > 0 && amount <= balance) {
-            balance -= amount;
-            System.out.println("Withdrew $" + amount + ". New balance: $" + balance);
+    static double withdraw(double balance) {
+        double amount;
+
+        System.out.print(GREEN + "Enter Withdraw Amount: " + RESET);
+        amount = scanner.nextDouble();
+
+        if (amount > balance) {
+            System.out.println(RED + "-------------------" + RESET);
+            System.out.println(RED + "Insufficient balance!" + RESET);
+            return 0;
+        } else if (amount < 0) {
+            System.out.println(RED + "-------------------" + RESET);
+            System.out.println(RED + "Amount can't be negative!" + RESET);
+            return 0;
         } else {
-            System.out.println("Insufficient balance or invalid amount.");
+            return amount;
         }
     }
 }
